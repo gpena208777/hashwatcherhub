@@ -27,12 +27,14 @@ description: >-
 
   🌐 Remote Access via Tailscale
 
-  • Combined with the Umbrel Tailscale app, access your miners — and your
-  entire Umbrel device — securely from anywhere
+  • Works alongside the Umbrel Tailscale app — if you already have Tailscale
+  installed, HashWatcher Hub detects it automatically. No extra configuration needed.
+
+  • Access your miners — and your entire Umbrel device — securely from anywhere
 
   • No port forwarding or dynamic DNS required
 
-  • Tailscale key expiry monitoring with proactive alerts
+  • Tailscale key expiry monitoring with proactive alerts in the HashWatcher app
 
 
   📱 HashWatcher App Integration
