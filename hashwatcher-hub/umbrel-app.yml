@@ -1,0 +1,32 @@
+manifestVersion: 1
+id: hashwatcher-hub
+category: finance
+name: HashWatcher Hub
+version: "1.0.0"
+tagline: Monitor your ASIC miners remotely via Tailscale
+description: >-
+  HashWatcher Hub turns your Umbrel into a bridge for monitoring ASIC mining
+  rigs (BitAxe, Canaan, etc.) from anywhere. It polls your local miners,
+  serves a status dashboard, and integrates with the HashWatcher iOS app
+  for remote monitoring via Tailscale VPN.
+
+  Features:
+  - Automatic miner discovery on your local network
+  - Real-time miner polling (hashrate, temperature, power, efficiency)
+  - Local web dashboard on port 8787
+  - Tailscale integration for secure remote access
+  - REST API for the HashWatcher iOS/macOS app
+  - Tailscale key expiry monitoring and alerts
+releaseNotes: "Initial release"
+developer: Engineered Essentials
+website: https://hashwatcher.app
+dependencies: []
+repo: https://github.com/gpena208777/hashwatcherhub
+support: https://hashwatcher.app/support
+port: 8787
+gallery: []
+path: ""
+defaultUsername: ""
+defaultPassword: ""
+submitter: Engineered Essentials
+submission: ""
