@@ -1,6 +1,6 @@
 manifestVersion: 1
 id: hashwatcher-hub
-category: finance
+category: utilities
 name: HashWatcher Hub
 version: "1.0.0"
 tagline: Monitor your ASIC miners from anywhere
