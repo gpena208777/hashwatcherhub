@@ -17,6 +17,7 @@ description: >-
   - Tailscale integration for secure remote access
   - REST API for the HashWatcher iOS/macOS app
   - Tailscale key expiry monitoring and alerts
+icon: https://raw.githubusercontent.com/gpena208777/hashwatcherhub/main/hashwatcher-hub/icon.png
 releaseNotes: "Initial release"
 developer: Engineered Essentials
 website: https://hashwatcher.app
