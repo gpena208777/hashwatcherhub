@@ -7,14 +7,15 @@ tagline: Monitor your ASIC miners from anywhere
 description: >-
   HashWatcher Hub turns your Umbrel into a remote bridge for monitoring
   ASIC mining rigs — BitAxe, Canaan, and more — from anywhere in the world.
+  
 
 
   Pair it with the free HashWatcher app (available at http://www.HashWatcher.app
-  for iOS and macOS) to get real-time dashboards, alerts, and full control
+  for iOS and macOS and Android) to get real-time dashboards, alerts, and full control
   of your miners right from your phone.
 
 
-  ⛏ Mining Monitoring
+   Mining Monitoring
 
   • Automatic discovery of miners on your local network
 
@@ -25,7 +26,7 @@ description: >-
   • Proxy requests to individual miners through the hub
 
 
-  🌐 Remote Access via Tailscale
+   Remote Access via Tailscale
 
   • Works alongside the Umbrel Tailscale app — if you already have Tailscale
   installed, HashWatcher Hub detects it automatically. No extra configuration needed.
@@ -37,18 +38,15 @@ description: >-
   • Tailscale key expiry monitoring with proactive alerts in the HashWatcher app
 
 
-  📱 HashWatcher App Integration
+   HashWatcher App Integration
 
   • Download the companion app at www.HashWatcher.app
 
-  • Connect to your hub by entering your Umbrel's IP and port 8787
-
-  • View fleet-wide dashboards, per-miner details, and historical trends
-
-  • Receive push notifications for miner issues and Tailscale key expiry
+  • View fleet-wide dashboards, per-miner details.
 
 
-  🖥 Full Umbrel Access
+
+   Full Umbrel Access
 
   • Since Tailscale gives you a secure tunnel to your Umbrel, you also get
   remote access to all your other Umbrel apps — Home Assistant, Immich,
