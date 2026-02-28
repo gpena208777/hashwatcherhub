@@ -1,11 +1,7 @@
-# Use this file in the public app store repo (hashwatcherhub).
-# Copy to hashwatcher-gateway/docker-compose.yml — includes version for compatibility.
 version: "3.7"
 
 services:
   app_proxy:
-    depends_on:
-      - web
     environment:
       APP_HOST: hashwatcher-gateway_web_1
       APP_PORT: 8787
@@ -15,7 +11,7 @@ services:
     image: hashwatcher/hashwatcher-gateway:latest
     restart: on-failure
     stop_grace_period: 30s
-    hostname: HashWatcherGateway
+    hostname: hashwatcher-gateway
     # Do not publish 8787 here — Umbrel's app_proxy binds to 8787 and forwards to this container.
     volumes:
       - ${APP_DATA_DIR}/data:/data
@@ -27,7 +23,7 @@ services:
       - net.ipv4.ip_forward=1
       - net.ipv6.conf.all.forwarding=1
     environment:
-      PI_HOSTNAME: HashWatcherGateway
+      PI_HOSTNAME: ${DEVICE_HOSTNAME:-HashWatcherGateway}
       AGENT_ID: hashwatcher-gateway
       HOST_IP: ${DEVICE_HOST:-}
       BITAXE_HOST: ""
