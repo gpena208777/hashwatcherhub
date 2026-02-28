@@ -1,14 +1,8 @@
 # Use this file in the public app store repo (hashwatcherhub).
-# Copy to hashwatcher-gateway/docker-compose.yml — includes version for compatibility.
+# Copy to hashwatcher-gateway/docker-compose.yml
 version: "3.7"
 
 services:
-  app_proxy:
-    environment:
-      APP_HOST: hashwatcher-gateway_web_1
-      APP_PORT: 8787
-      PROXY_AUTH_ADD: "false"
-
   web:
     image: hashwatcher/hashwatcher-gateway:latest
     restart: on-failure
