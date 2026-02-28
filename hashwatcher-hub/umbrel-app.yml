@@ -21,17 +21,19 @@ description: >-
 
   • Real-time polling of hashrate, temperature, power, and efficiency
 
-  • Local web dashboard at port 8787 for quick status checks
-
   • Proxy requests to individual miners through the hub
 
 
    Remote Access via Tailscale
 
+  • This app is built on Tailscale—the most trusted zero-configuration private networking
+  platform for secure, peer-to-peer access from anywhere.
+   
+
   • Works alongside the Umbrel Tailscale app — if you already have Tailscale
   installed, HashWatcher Hub detects it automatically. No extra configuration needed.
 
-  • Access your miners — and your entire Umbrel device — securely from anywhere
+  • Access your miners — and your entire Umbrel device — securely from anywhere with just this app.
 
   • No port forwarding or dynamic DNS required
 
