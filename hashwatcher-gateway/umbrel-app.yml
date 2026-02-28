@@ -20,8 +20,6 @@ description: >-
 
   • Real-time polling of hashrate, temperature, power, and efficiency
 
-  • Local web dashboard at port 8787 for quick status checks
-
   • Proxy requests to individual miners through the gateway
 
 
@@ -40,9 +38,7 @@ description: >-
 
   📱 HashWatcher App Integration
 
-  • Download the companion app at www.HashWatcher.app
-
-  • Connect to your gateway by entering your Umbrel's IP and port 8787
+  • Download the companion app at www.HashWatcher.app or in your app store.
 
   • View fleet-wide dashboards, per-miner details, and historical trends
 
