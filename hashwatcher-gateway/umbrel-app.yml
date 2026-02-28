@@ -14,7 +14,7 @@ description: >-
   of your miners right from your phone.
 
 
-  ⛏ Mining Monitoring
+   Mining Monitoring
 
   • Automatic discovery of miners on your local network
 
@@ -23,7 +23,7 @@ description: >-
   • Proxy requests to individual miners through the gateway
 
 
-  🌐 Built-in Remote Access via Tailscale
+   Built-in Remote Access via Tailscale
 
   • Tailscale is included — just enter your auth key in the gateway's setup page
 
@@ -36,7 +36,7 @@ description: >-
   • Tailscale key expiry monitoring with proactive alerts in the HashWatcher app
 
 
-  📱 HashWatcher App Integration
+   HashWatcher App Integration
 
   • Download the companion app at www.HashWatcher.app or in your app store.
 
@@ -45,7 +45,7 @@ description: >-
   • Receive push notifications for miner issues and Tailscale key expiry
 
 
-  🖥 Full Umbrel Access
+   Full Umbrel Access
 
   • Since Tailscale gives you a secure tunnel to your Umbrel, you also get
   remote access to all your other Umbrel apps — Home Assistant, Immich,
