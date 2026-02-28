@@ -6,7 +6,7 @@ services:
       PROXY_AUTH_ADD: "false"
 
   web:
-    image: hashwatcher/hashwatcher-hub:latest
+    image: hashwatcher/hashwatcher-gateway:latest
     restart: on-failure
     stop_grace_period: 30s
     hostname: hashwatcher-gateway
