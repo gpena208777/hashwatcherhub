@@ -3,15 +3,21 @@
 version: "3.7"
 
 services:
+  app_proxy:
+    environment:
+      APP_HOST: hashwatcher-gateway_web_1
+      APP_PORT: 8787
+      PROXY_AUTH_ADD: "false"
+
   web:
     image: hashwatcher/hashwatcher-gateway:latest
     restart: on-failure
     stop_grace_period: 30s
-    network_mode: host
     privileged: true
     volumes:
       - ${APP_DATA_DIR}/data:/data
       - /dev/net/tun:/dev/net/tun
+      - /proc/net:/host_proc_net:ro
     environment:
       PI_HOSTNAME: ${DEVICE_HOSTNAME:-HashWatcherGateway}
       AGENT_ID: hashwatcher-gateway
