@@ -1,8 +1,7 @@
 services:
   app_proxy:
     environment:
-      # With network_mode: host, the app binds directly to the host's port
-      APP_HOST: ${DEVICE_HOST:-umbrel.local}
+      APP_HOST: hashwatcher-gateway_web_1
       APP_PORT: 8787
       PROXY_AUTH_ADD: "false"
 
@@ -18,9 +17,11 @@ services:
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
-    # Note: sysctls not needed with network_mode: host - set in entrypoint.sh
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
     environment:
-      PI_HOSTNAME: ${DEVICE_HOSTNAME:-umbrel}
+      PI_HOSTNAME: ${DEVICE_HOSTNAME:-hashwatcher-gateway}
       AGENT_ID: hashwatcher-gateway
       BITAXE_HOST: ""
       BITAXE_SCHEME: http

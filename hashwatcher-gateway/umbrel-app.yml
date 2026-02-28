@@ -1,6 +1,6 @@
 manifestVersion: 1
 id: hashwatcher-gateway
-category: finance
+category: utilities
 name: HashWatcher Gateway
 version: "1.2.0"
 tagline: Monitor your ASIC miners from anywhere
@@ -14,18 +14,16 @@ description: >-
   of your miners right from your phone.
 
 
-  ⛏ Mining Monitoring
+   Mining Monitoring
 
   • Automatic discovery of miners on your local network
 
   • Real-time polling of hashrate, temperature, power, and efficiency
 
-  • Local web dashboard at port 8787 for quick status checks
-
   • Proxy requests to individual miners through the gateway
 
 
-  🌐 Built-in Remote Access via Tailscale
+   Built-in Remote Access via Tailscale
 
   • Tailscale is included — just enter your auth key in the gateway's setup page
 
@@ -38,27 +36,22 @@ description: >-
   • Tailscale key expiry monitoring with proactive alerts in the HashWatcher app
 
 
-  📱 HashWatcher App Integration
+   HashWatcher App Integration
 
-  • Download the companion app at www.HashWatcher.app
-
-  • Connect to your gateway by entering your Umbrel's IP and port 8787
+  • Download the companion app at www.HashWatcher.app or in your app store.
 
   • View fleet-wide dashboards, per-miner details, and historical trends
 
   • Receive push notifications for miner issues and Tailscale key expiry
 
 
-  🖥 Full Umbrel Access
+   Full Umbrel Access
 
   • Since Tailscale gives you a secure tunnel to your Umbrel, you also get
   remote access to all your other Umbrel apps — Home Assistant, Immich,
   Bitcoin Node, and everything else on your dashboard
 icon: https://raw.githubusercontent.com/gpena208777/hashwatcherhub/main/hashwatcher-gateway/icon.png
-releaseNotes: >-
-  Fixed subnet routing for Tailscale. The gateway now uses host networking
-  to properly detect and advertise your local network subnet, enabling
-  remote access to miners and Umbrel from anywhere via Tailscale.
+releaseNotes: "Improvements"
 developer: Engineered Essentials
 website: https://hashwatcher.app
 dependencies: []
