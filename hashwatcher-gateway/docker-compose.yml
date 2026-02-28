@@ -4,6 +4,8 @@ version: "3.7"
 
 services:
   app_proxy:
+    depends_on:
+      - web
     environment:
       APP_HOST: hashwatcher-gateway_web_1
       APP_PORT: 8787
