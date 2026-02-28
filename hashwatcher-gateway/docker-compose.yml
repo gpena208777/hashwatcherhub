@@ -1,7 +1,7 @@
 services:
   app_proxy:
     environment:
-      APP_HOST: hashwatcher-hub_web_1
+      APP_HOST: hashwatcher-gateway_web_1
       APP_PORT: 8787
       PROXY_AUTH_ADD: "false"
 
@@ -9,13 +9,21 @@ services:
     image: hashwatcher/hashwatcher-hub:latest
     restart: on-failure
     stop_grace_period: 30s
+    hostname: hashwatcher-gateway
     ports:
       - "8787:8787"
     volumes:
       - ${APP_DATA_DIR}/data:/data
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
     environment:
       PI_HOSTNAME: ${DEVICE_HOSTNAME:-umbrel}
-      AGENT_ID: hashwatcher-hub
+      AGENT_ID: hashwatcher-gateway
       BITAXE_HOST: ""
       BITAXE_SCHEME: http
       BITAXE_ENDPOINTS: /system/info,/api/system/info

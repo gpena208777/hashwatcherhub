@@ -1,0 +1,73 @@
+manifestVersion: 1
+id: hashwatcher-gateway
+category: finance
+name: HashWatcher Gateway
+version: "1.1.0"
+tagline: Monitor your ASIC miners from anywhere
+description: >-
+  HashWatcher Gateway turns your Umbrel into a remote bridge for monitoring
+  ASIC mining rigs — BitAxe, Canaan, and more — from anywhere in the world.
+
+
+  Pair it with the free HashWatcher app (available at www.HashWatcher.app
+  for iOS and macOS) to get real-time dashboards, alerts, and full control
+  of your miners right from your phone.
+
+
+  ⛏ Mining Monitoring
+
+  • Automatic discovery of miners on your local network
+
+  • Real-time polling of hashrate, temperature, power, and efficiency
+
+  • Local web dashboard at port 8787 for quick status checks
+
+  • Proxy requests to individual miners through the gateway
+
+
+  🌐 Built-in Remote Access via Tailscale
+
+  • Tailscale is included — just enter your auth key in the gateway's setup page
+
+  • No separate Tailscale app needed; the gateway handles everything
+
+  • Access your miners — and your entire Umbrel device — securely from anywhere
+
+  • No port forwarding or dynamic DNS required
+
+  • Tailscale key expiry monitoring with proactive alerts in the HashWatcher app
+
+
+  📱 HashWatcher App Integration
+
+  • Download the companion app at www.HashWatcher.app
+
+  • Connect to your gateway by entering your Umbrel's IP and port 8787
+
+  • View fleet-wide dashboards, per-miner details, and historical trends
+
+  • Receive push notifications for miner issues and Tailscale key expiry
+
+
+  🖥 Full Umbrel Access
+
+  • Since Tailscale gives you a secure tunnel to your Umbrel, you also get
+  remote access to all your other Umbrel apps — Home Assistant, Immich,
+  Bitcoin Node, and everything else on your dashboard
+icon: https://raw.githubusercontent.com/gpena208777/hashwatcherhub/main/hashwatcher-gateway/icon.png
+releaseNotes: >-
+  Rebranded to HashWatcher Gateway. New themed UI with animated background,
+  collapsible setup guide, visual step-by-step instructions with screenshots,
+  and smart memory/temp formatting.
+developer: Engineered Essentials
+website: https://hashwatcher.app
+dependencies: []
+repo: https://github.com/gpena208777/hashwatcherhub
+support: https://hashwatcher.app/support
+port: 8787
+gallery: []
+path: ""
+defaultUsername: ""
+defaultPassword: ""
+submitter: Engineered Essentials
+submission: ""

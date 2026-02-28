@@ -1,0 +1,2 @@
+export APP_HASHWATCHER_GATEWAY_IP="${APP_HASHWATCHER_GATEWAY_IP:-$(hostname -I | awk '{print $1}')}"
+export APP_HASHWATCHER_GATEWAY_PORT="8787"
