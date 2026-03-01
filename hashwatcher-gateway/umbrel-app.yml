@@ -51,7 +51,7 @@ description: >-
   remote access to all your other Umbrel apps — Home Assistant, Immich,
   Bitcoin Node, and everything else on your dashboard
 icon: https://raw.githubusercontent.com/gpena208777/hashwatcherhub/main/hashwatcher-gateway/icon.png
-releaseNotes: "Fix LAN detection and Tailscale hostname; add X social link"
+releaseNotes: "Improved onboarding — setup guide no longer auto-collapses when subnet routes are approved, letting users complete all steps at their own pace."
 developer: Engineered Essentials
 website: https://hashwatcher.app
 dependencies: []
