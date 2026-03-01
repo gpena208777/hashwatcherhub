@@ -256,78 +256,10 @@ The gateway is built on Tailscale for security — we don't rely on obscurity. Y
 
 ---
 
-## API Endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/status` | Full gateway status (miner data, Tailscale, telemetry) |
-| GET | `/api/config` | Current runtime config |
-| POST | `/api/config` | Update miner pairing config |
-| POST | `/api/reset` | Reset miner pairing |
-| GET | `/api/discover` | Scan local subnet for miners |
-| GET | `/api/discover?cidr=192.168.1.0/24` | Scan a specific subnet |
-| GET | `/api/tailscale/status` | Tailscale connection info |
-| POST | `/api/tailscale/setup` | Connect Tailscale with auth key |
-| POST | `/api/tailscale/up` | Turn Tailscale on |
-| POST | `/api/tailscale/down` | Turn Tailscale off |
-| POST | `/api/tailscale/logout` | Disconnect and deauthorize |
-| GET | `/api/network` | Local IP and subnet info |
-| GET | `/api/miner/data` | Latest paired miner data |
-| POST | `/api/miner/proxy` | Proxy a request to any miner by IP |
 
 ---
 
-## Development
 
-### Run locally with Docker
-
-```bash
-cd umbrel-app
-docker build -t hashwatcher-gateway .
-docker run -p 8787:8787 \
-  --privileged \
-  -v $(pwd)/data:/data \
-  -v /dev/net/tun:/dev/net/tun \
-  hashwatcher-gateway
-```
-
-Open `http://localhost:8787` to see the dashboard.
-
-### Build and push multi-arch image
-
-The Umbrel community includes Raspberry Pi (ARM) users, so the Docker image must support both `amd64` and `arm64`:
-
-```bash
-cd umbrel-app
-docker login -u hashwatcher
-./build-push-multiarch.sh
-```
-
-### Update the app store listing
-
-1. Make changes to `hub_agent.py`, `tailscale_setup.py`, or other files
-2. Rebuild and push the Docker image (above)
-3. Copy `docker-compose.store.yml` to the app store repo as `hashwatcher-gateway/docker-compose.yml`
-4. Increment the `version` in `umbrel-app.yml` in the app store repo
-5. Commit and push to the [hashwatcherhub](https://github.com/gpena208777/hashwatcherhub) repo
-
-### File structure
-
-```
-umbrel-app/
-├── hub_agent.py              # Main gateway agent (HTTP server, miner polling, dashboard)
-├── tailscale_setup.py         # Tailscale CLI wrappers (setup, status, subnet detection)
-├── entrypoint.sh              # Starts tailscaled + Python agent
-├── Dockerfile                 # Python 3.11 slim + Tailscale + iproute2
-├── requirements.txt           # Python dependencies (requests)
-├── docker-compose.yml         # Local dev compose (uses build: context)
-├── docker-compose.store.yml   # App store compose (uses image: from Docker Hub)
-├── umbrel-app.yml             # Umbrel app manifest
-├── build-push-multiarch.sh    # Build + push for amd64 and arm64
-├── icon.png                   # App icon
-├── step4a.png                 # Setup guide screenshots
-├── step4b.png
-└── step4c.png
 ```
 
 
