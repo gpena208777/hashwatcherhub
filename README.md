@@ -131,6 +131,205 @@ The gateway app is free. The HashWatcher companion app is free to download with 
 </details>
 
 ---
+# HashWatcher Gateway for Umbrel
+
+Monitor your ASIC mining rigs (BitAxe, Canaan, and more) from anywhere in the world. The HashWatcher Gateway turns your Umbrel into a secure remote bridge with built-in Tailscale — no port forwarding, no dynamic DNS, no separate VPN setup.
+
+Pair it with the free [HashWatcher app](https://www.HashWatcher.app) for iOS, macOS, and Android.
+
+Follow us on [X/Twitter](https://x.com/HashWatcher).
+
+---
+
+## Install on Umbrel
+
+### From the Community App Store
+
+1. Open your Umbrel dashboard (usually `http://umbrel.local`)
+2. Go to **App Store** and search for **HashWatcher Gateway**, or add the community store repo:
+   ```
+   https://github.com/gpena208777/hashwatcherhub
+   ```
+3. Click **Install**
+4. Once installed, click the app icon to open the gateway dashboard
+
+### First-Time Setup
+
+After installing, the gateway dashboard walks you through everything:
+
+1. **Download the HashWatcher app** at [HashWatcher.app](https://www.HashWatcher.app)
+2. **Get a Tailscale auth key** from [login.tailscale.com/admin/settings/keys](https://login.tailscale.com/admin/settings/keys) (free account)
+3. **Enter the auth key** in the gateway's setup page
+4. **Approve subnet routes** in the [Tailscale Machines page](https://login.tailscale.com/admin/machines) — find `HashWatcherGateway`, click **...** > **Edit route settings**, and approve your local subnet
+5. **Install Tailscale on your phone** from [tailscale.com/download](https://tailscale.com/download) and sign in with the same account
+6. **Disable key expiry** (recommended) so the gateway stays connected permanently
+
+That's it. Your miners are now accessible from anywhere through the HashWatcher app.
+
+---
+
+## What It Does
+
+- **Miner polling** — periodically fetches hashrate, temperature, power, and efficiency from your local miners
+- **Miner discovery** — scans your local subnet to find miners automatically
+- **Web dashboard** — status page with Tailscale controls and guided setup at port 8787
+- **REST API** — JSON API for the HashWatcher app on port 8787
+- **Miner proxy** — proxies HTTP requests to individual miners through the gateway
+- **Built-in Tailscale** — the gateway runs its own Tailscale instance inside the Docker container, completely isolated from any Tailscale you may already have on your Umbrel
+- **Key expiry monitoring** — warns you in the dashboard (and via push notification in the app) when your Tailscale key is about to expire
+
+---
+
+## Frequently Asked Questions
+
+### I already have Tailscale installed on my Umbrel. Will this conflict?
+
+No. The gateway runs its own isolated Tailscale instance inside the Docker container with a separate state file, socket, and network namespace. Your existing Tailscale setup is completely untouched. You'll just see two devices in your Tailscale admin — your Umbrel and the HashWatcher Gateway.
+
+### What miners are supported?
+
+Any miner with an HTTP API, including:
+- **BitAxe** (all variants: Supra, Ultra, Gamma, Hex, etc.)
+- **NerdQAxe / NerdAxe**
+- **Canaan Avalon** (via CGMiner TCP protocol)
+- **Any miner** reachable via HTTP on your local network
+
+### Do I need to open any ports on my router?
+
+No. Tailscale creates an encrypted tunnel — no port forwarding or dynamic DNS needed.
+
+### What happens if I uninstall and reinstall?
+
+Your Tailscale state is stored in a persistent volume (`/data`). If you uninstall and reinstall, you'll need to re-enter your auth key and re-approve subnet routes in the Tailscale admin console.
+
+### Can I access my other Umbrel apps remotely too?
+
+Yes. Since the gateway advertises your local subnet through Tailscale, you get remote access to everything on your network — Umbrel dashboard, Home Assistant, Bitcoin Node, and any other local services.
+
+---
+
+## Inspecting the Source Code
+
+We believe in transparency. The gateway runs as a Docker image; you can inspect exactly what's inside.
+
+### Quick inspection (without running)
+
+```bash
+# Pull the image
+docker pull hashwatcher/hashwatcher-gateway:latest
+
+# List files in the container
+docker run --rm hashwatcher/hashwatcher-gateway:latest ls -la /app
+
+# View the main agent source
+docker run --rm hashwatcher/hashwatcher-gateway:latest cat /app/hub_agent.py
+
+# View Tailscale setup code
+docker run --rm hashwatcher/hashwatcher-gateway:latest cat /app/tailscale_setup.py
+```
+
+### Copy source out for full review
+
+```bash
+# Create a temp container and copy the app directory
+docker create --name hw-inspect hashwatcher/hashwatcher-gateway:latest
+docker cp hw-inspect:/app ./hashwatcher-gateway-source
+docker rm hw-inspect
+
+# Browse ./hashwatcher-gateway-source — hub_agent.py, tailscale_setup.py, entrypoint.sh, etc.
+```
+
+### Inspect a running instance (Umbrel)
+
+If the app is already running on your Umbrel:
+
+```bash
+# Find the container name (e.g. umbrel-app-store_hashwatcher-gateway_web_1)
+docker ps | grep hashwatcher
+
+# Exec into it and explore
+docker exec -it <container_name> sh
+# Then: ls /app, cat /app/hub_agent.py, etc.
+```
+
+The gateway is built on Tailscale for security — we don't rely on obscurity. You're welcome to audit the code.
+
+---
+
+## API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/status` | Full gateway status (miner data, Tailscale, telemetry) |
+| GET | `/api/config` | Current runtime config |
+| POST | `/api/config` | Update miner pairing config |
+| POST | `/api/reset` | Reset miner pairing |
+| GET | `/api/discover` | Scan local subnet for miners |
+| GET | `/api/discover?cidr=192.168.1.0/24` | Scan a specific subnet |
+| GET | `/api/tailscale/status` | Tailscale connection info |
+| POST | `/api/tailscale/setup` | Connect Tailscale with auth key |
+| POST | `/api/tailscale/up` | Turn Tailscale on |
+| POST | `/api/tailscale/down` | Turn Tailscale off |
+| POST | `/api/tailscale/logout` | Disconnect and deauthorize |
+| GET | `/api/network` | Local IP and subnet info |
+| GET | `/api/miner/data` | Latest paired miner data |
+| POST | `/api/miner/proxy` | Proxy a request to any miner by IP |
+
+---
+
+## Development
+
+### Run locally with Docker
+
+```bash
+cd umbrel-app
+docker build -t hashwatcher-gateway .
+docker run -p 8787:8787 \
+  --privileged \
+  -v $(pwd)/data:/data \
+  -v /dev/net/tun:/dev/net/tun \
+  hashwatcher-gateway
+```
+
+Open `http://localhost:8787` to see the dashboard.
+
+### Build and push multi-arch image
+
+The Umbrel community includes Raspberry Pi (ARM) users, so the Docker image must support both `amd64` and `arm64`:
+
+```bash
+cd umbrel-app
+docker login -u hashwatcher
+./build-push-multiarch.sh
+```
+
+### Update the app store listing
+
+1. Make changes to `hub_agent.py`, `tailscale_setup.py`, or other files
+2. Rebuild and push the Docker image (above)
+3. Copy `docker-compose.store.yml` to the app store repo as `hashwatcher-gateway/docker-compose.yml`
+4. Increment the `version` in `umbrel-app.yml` in the app store repo
+5. Commit and push to the [hashwatcherhub](https://github.com/gpena208777/hashwatcherhub) repo
+
+### File structure
+
+```
+umbrel-app/
+├── hub_agent.py              # Main gateway agent (HTTP server, miner polling, dashboard)
+├── tailscale_setup.py         # Tailscale CLI wrappers (setup, status, subnet detection)
+├── entrypoint.sh              # Starts tailscaled + Python agent
+├── Dockerfile                 # Python 3.11 slim + Tailscale + iproute2
+├── requirements.txt           # Python dependencies (requests)
+├── docker-compose.yml         # Local dev compose (uses build: context)
+├── docker-compose.store.yml   # App store compose (uses image: from Docker Hub)
+├── umbrel-app.yml             # Umbrel app manifest
+├── build-push-multiarch.sh    # Build + push for amd64 and arm64
+├── icon.png                   # App icon
+├── step4a.png                 # Setup guide screenshots
+├── step4b.png
+└── step4c.png
+```
+
 
 ## Links
 
