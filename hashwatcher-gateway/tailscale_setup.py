@@ -261,18 +261,19 @@ def setup(auth_key: str, subnet_cidr: Optional[str] = None) -> Dict[str, Any]:
         return {"ok": False, "error": f"tailscale up failed: {stderr}"}
 
     import time
-    for _ in range(5):
-        time.sleep(1)
+    for i in range(15):
+        time.sleep(2 if i < 5 else 3)
         s = status()
         if s.get("authenticated") and s.get("ip"):
             return {"ok": True, "advertisedRoutes": [resolved_cidr], "ip": s["ip"], "hostname": s.get("hostname")}
 
+    s = status()
     return {
         "ok": True,
         "advertisedRoutes": [resolved_cidr],
-        "ip": None,
-        "hostname": ts_hostname,
-        "note": "Tailscale is connecting. Reload the page in a few seconds.",
+        "ip": s.get("ip"),
+        "hostname": s.get("hostname") or ts_hostname,
+        "note": "Tailscale connected but IP may still be propagating. The page will reload shortly.",
     }
 
 

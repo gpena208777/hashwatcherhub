@@ -115,6 +115,7 @@ class HubAgent:
         self.paired_miner_mac = ""
         self.paired_miner_hostname = ""
         self.paired = bool(self.bitaxe_host.strip())
+        self.user_subnet_cidr = ""
 
         self.config_lock = threading.Lock()
         self._load_runtime_config()
@@ -171,6 +172,9 @@ class HubAgent:
                 self.paired = paired_flag
             else:
                 self.paired = bool(self.bitaxe_host.strip())
+            user_subnet = str(cfg.get("userSubnetCIDR", "")).strip()
+            if user_subnet:
+                self.user_subnet_cidr = user_subnet
         except Exception as exc:
             print(f"[{now_iso()}] WARNING: failed to load runtime config: {exc}", flush=True)
 
@@ -183,6 +187,7 @@ class HubAgent:
             "minerMac": self.paired_miner_mac,
             "minerHostname": self.paired_miner_hostname,
             "paired": self.paired,
+            "userSubnetCIDR": self.user_subnet_cidr,
             "updatedAtIso": now_iso(),
         }
         os.makedirs(os.path.dirname(self.runtime_config_path), exist_ok=True)
@@ -549,6 +554,19 @@ class HubAgent:
         local_ip = self._get_local_ip()
         subnet = tailscale_setup.detect_subnet()
         ts = tailscale_setup.status()
+
+        if not subnet and self.user_subnet_cidr:
+            subnet = self.user_subnet_cidr
+        if not subnet:
+            routes = ts.get("advertisedRoutes", [])
+            if routes:
+                subnet = routes[0]
+        if not local_ip and subnet:
+            base = subnet.split("/")[0]
+            octets = base.split(".")
+            if len(octets) == 4:
+                local_ip = f"{octets[0]}.{octets[1]}.{octets[2]}.x (from subnet)"
+
         return {
             "localIp": local_ip,
             "detectedSubnet": subnet,
@@ -696,6 +714,10 @@ class HubAgent:
                     auth_key = str(payload.get("authKey") or "")
                     subnet_cidr = str(payload.get("subnetCIDR") or "")
                     result = tailscale_setup.setup(auth_key=auth_key, subnet_cidr=subnet_cidr or None)
+                    if result.get("ok") and subnet_cidr.strip():
+                        with agent.config_lock:
+                            agent.user_subnet_cidr = subnet_cidr.strip()
+                            agent._persist_runtime_config()
                     http_status = 200 if result.get("ok") else 400
                     self._send_json(result, status=http_status)
                     return
@@ -1081,9 +1103,28 @@ async function connectTailscale() {{
     }});
     const data = await resp.json();
     if (data.ok) {{
-      result.textContent = 'Connected! IP: ' + (data.ip || 'pending');
+      result.textContent = 'Connected! IP: ' + (data.ip || 'resolving...');
       result.style.color = '#33e680';
-      setTimeout(() => location.reload(), 1500);
+      btn.textContent = 'Connected ✓';
+      // Poll until the dashboard shows Tailscale as online, then reload
+      let polls = 0;
+      const pollReload = setInterval(async () => {{
+        polls++;
+        try {{
+          const sr = await fetch('/api/tailscale/status');
+          const sd = await sr.json();
+          if (sd.online && sd.ip) {{
+            result.textContent = 'Connected! IP: ' + sd.ip;
+            clearInterval(pollReload);
+            setTimeout(() => location.reload(), 500);
+          }} else if (polls >= 15) {{
+            clearInterval(pollReload);
+            location.reload();
+          }}
+        }} catch (_) {{
+          if (polls >= 15) {{ clearInterval(pollReload); location.reload(); }}
+        }}
+      }}, 2000);
     }} else {{
       result.textContent = data.error || 'Setup failed';
       result.style.color = '#fca5a5';
