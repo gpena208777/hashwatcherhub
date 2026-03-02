@@ -781,7 +781,8 @@ class HubAgent:
         detected_subnet = net.get("detectedSubnet") or "-"
         local_ip = net.get("localIp") or "-"
         ts_ip = ts_status.get("ip", "-")
-        ts_hostname = ts_status.get("hostname", "-")
+        ts_hostname_actual = ts_status.get("hostname", "-")
+        ts_machine_name = os.getenv("PI_HOSTNAME", "HashWatcherGateway")
         ts_online = ts_status.get("online", False)
         ts_installed = ts_status.get("installed", False)
         key_expired = ts_status.get("keyExpired", False)
@@ -791,6 +792,12 @@ class HubAgent:
         all_done = ts_online and routes_approved and not routes_pending
         can_turn_on = bool(ts_status.get("advertisedRoutes")) or ts_status.get("authenticated", False)
         key_expiry_raw = ts_status.get("keyExpiry", "")
+        app_version = env_str("APP_VERSION", "latest")
+        support_mailto = (
+            "mailto:info@engineeredessentials.com"
+            "?subject=HashWatcherGateway%20help"
+            f"&body=%0A%0A---%0AApp%20version:%20{app_version}%0A"
+        )
 
         expiry_banner = ""
         if key_expired:
@@ -908,7 +915,7 @@ class HubAgent:
     <div class="info-row"><span class="info-label">Local IP</span><code>{local_ip}</code></div>
     <div class="info-row"><span class="info-label">Local Network</span><code>{detected_subnet}</code></div>
     <div class="info-row"><span class="info-label">Tailscale IP</span><code>{ts_ip}</code></div>
-    <div class="info-row"><span class="info-label">Tailscale Hostname</span><code>{ts_hostname}</code></div>
+    <div class="info-row"><span class="info-label">Tailscale Hostname</span><code>{ts_hostname_actual}</code></div>
     {expiry_banner}
     <hr class="divider">
     <h3 style="margin:8px 0 10px;">System</h3>
@@ -933,7 +940,7 @@ class HubAgent:
         {'<button onclick="turnOffTailscale()" class="btn" style="background:#2c2c2e;color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.15);">Turn Off</button><a href="#" onclick="disconnectTailscale(); return false;" style="color:rgba(255,255,255,0.35);font-size:0.8em;margin-left:4px;">Disconnect</a>' if ts_online else '<button onclick="turnOnTailscale()" class="btn">Turn On</button>' if can_turn_on else ''}
       </div>
     </div>
-    <div id="tsStep4Warning" class="alert alert-yellow" style="margin:10px 0 0; {'display:block;' if ts_online and not routes_approved else 'display:none;'}">&#9888; <strong>Step 4 not complete yet.</strong> Waiting for API confirmation that subnet routes are approved. Go to the <a href="https://login.tailscale.com/admin/machines" target="_blank">Tailscale Machines page</a>, find <code>{ts_hostname}</code>, click <strong>&hellip;</strong> &rarr; <strong>Edit route settings</strong>, and approve <code>{detected_subnet}</code>. This warning clears only when the API reports routes approved.</div>
+    <div id="tsStep4Warning" class="alert alert-yellow" style="margin:10px 0 0; {'display:block;' if ts_online and not routes_approved else 'display:none;'}">&#9888; <strong>Step 4 not complete yet.</strong> Waiting for API confirmation that subnet routes are approved. Go to the <a href="https://login.tailscale.com/admin/machines" target="_blank">Tailscale Machines page</a>, find <code>{ts_machine_name}</code>, click <strong>&hellip;</strong> &rarr; <strong>Edit route settings</strong>, and approve <code>{detected_subnet}</code>. This warning clears only when the API reports routes approved.</div>
     {expiry_banner}
     <span id="tsControlResult" style="font-size:0.85em;display:block;margin-top:6px;"></span>
   </div>
@@ -941,7 +948,7 @@ class HubAgent:
   <!-- Setup Guide -->
   <div class="card">
     <details id="setupGuide" open>
-      <summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;">
+      <summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;">
         <h2 style="margin:0;" id="setupGuideTitle">Setup Guide</h2>
         <span class="muted" style="font-size:0.85em;" id="setupGuideTap"></span>
       </summary>
@@ -991,7 +998,7 @@ class HubAgent:
       <span class="step-num {'step-action' if ts_online and not routes_approved else 'step-done' if routes_approved else ''}" id="step4badge">{'&#10003;' if routes_approved else '4'}</span>
       <strong>Approve Subnet Routes</strong>
       <div id="step4InlineWarning" class="alert alert-yellow" style="margin:8px 0; {'display:block;' if ts_online and not routes_approved else 'display:none;'}">&#9888; <strong>Step 4 not complete yet:</strong> routes are not approved in API status. Approve subnet routes in the Tailscale admin console and wait for API confirmation.</div>
-      <p class="muted" style="margin:6px 0 0;">Go to the <a href="https://login.tailscale.com/admin/machines" target="_blank">Tailscale Machines page</a>. Find <code>{ts_hostname}</code>, click the <strong>&hellip;</strong> menu, then <strong>Edit route settings</strong>. Approve the route for your local network <code>{detected_subnet}</code>.</p>
+      <p class="muted" style="margin:6px 0 0;">Go to the <a href="https://login.tailscale.com/admin/machines" target="_blank">Tailscale Machines page</a>. Find <code>{ts_machine_name}</code>, click the <strong>&hellip;</strong> menu, then <strong>Edit route settings</strong>. Approve the route for your local network <code>{detected_subnet}</code>.</p>
       <details style="margin-top:10px;">
         <summary style="cursor:pointer;color:#33e680;font-size:0.9em;">Show me how</summary>
         <p class="muted" style="font-size:0.85em;margin:8px 0 4px;">1. Find your device and click the <strong>&hellip;</strong> menu:</p>
@@ -1018,7 +1025,7 @@ class HubAgent:
         <p style="margin:0 0 8px;font-size:0.9em;color:#fff;font-weight:600;">How to disable key expiry:</p>
         <ol style="margin:0;padding-left:20px;font-size:0.9em;">
           <li style="margin:4px 0;">Open the <a href="https://login.tailscale.com/admin/machines" target="_blank">Tailscale Machines page</a></li>
-          <li style="margin:4px 0;">Find your device (look for <code>{ts_hostname}</code>)</li>
+          <li style="margin:4px 0;">Find your device (look for <code>{ts_machine_name}</code>)</li>
           <li style="margin:4px 0;">Click the <strong>&hellip;</strong> menu on the right side of the row</li>
           <li style="margin:4px 0;">Toggle <strong>Disable key expiry</strong> and save</li>
         </ol>
@@ -1038,6 +1045,9 @@ class HubAgent:
     <div style="text-align:center;margin:18px 0 6px;">
       <button id="setupCompleteBtn" class="btn" onclick="markSetupComplete()" style="background:#00cc66;color:#000;font-size:1em;padding:12px 32px;font-weight:700;border-radius:12px;">Setup Complete &#10003;</button>
     </div>
+    <p class="muted" style="font-size:0.85em;text-align:center;margin:8px 0 0;">
+      <a href="{support_mailto}" style="text-decoration:underline;">Questions?</a>
+    </p>
 
     </details>
   </div>
@@ -1188,20 +1198,33 @@ async function disconnectTailscale() {{
 
 function markSetupComplete() {{
   localStorage.setItem('hw_setup_complete', '1');
+  const guide = document.getElementById('setupGuide');
+  if (guide) guide.open = false;
   document.getElementById('setupGuideTitle').textContent = 'Setup Complete';
-  document.getElementById('setupGuideTap').textContent = '';
+  updateSetupGuideTap();
   const btn = document.getElementById('setupCompleteBtn');
   if (btn) btn.style.display = 'none';
 }}
 function restoreSetupComplete() {{
   if (localStorage.getItem('hw_setup_complete') === '1') {{
+    const guide = document.getElementById('setupGuide');
+    if (guide) guide.open = false;
     document.getElementById('setupGuideTitle').textContent = 'Setup Complete';
-    document.getElementById('setupGuideTap').textContent = '';
+    updateSetupGuideTap();
     const btn = document.getElementById('setupCompleteBtn');
     if (btn) btn.style.display = 'none';
   }}
 }}
+function updateSetupGuideTap() {{
+  const guide = document.getElementById('setupGuide');
+  const tap = document.getElementById('setupGuideTap');
+  if (!guide || !tap) return;
+  tap.textContent = guide.open ? 'collapse' : 'tap to expand';
+}}
 restoreSetupComplete();
+const _setupGuide = document.getElementById('setupGuide');
+if (_setupGuide) _setupGuide.addEventListener('toggle', updateSetupGuideTap);
+updateSetupGuideTap();
 restoreStepDone('step1', 'step1badge', 'step1DoneBtn', 'hw_step1_done');
 restoreStepDone('step5', 'step5badge', 'step5DoneBtn', 'hw_step5_done');
 
