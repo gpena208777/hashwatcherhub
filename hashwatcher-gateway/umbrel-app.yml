@@ -2,7 +2,7 @@ manifestVersion: 1
 id: hashwatcher-gateway
 category: finance
 name: HashWatcher Gateway
-version: "1.2.6"
+version: "1.2.7"
 tagline: Monitor your ASIC miners from anywhere
 description: >-
   HashWatcher Gateway turns your Umbrel into a remote bridge for monitoring
@@ -55,7 +55,7 @@ description: >-
   remote access to all your other Umbrel apps — Home Assistant, Immich,
   Bitcoin Node, and everything else on your dashboard
 icon: https://raw.githubusercontent.com/gpena208777/hashwatcherhub/main/hashwatcher-gateway/icon.png
-releaseNotes: "Tailscale setup: if the gateway can't detect your local subnet (e.g. on Umbrel/Docker), you can now enter your subnet CIDR explicitly (e.g. 192.168.1.0/24) in the optional Subnet field on the setup page."
+releaseNotes: "improvments"
 developer: Engineered Essentials
 website: https://hashwatcher.app
 dependencies: []
