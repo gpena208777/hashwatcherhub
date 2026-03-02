@@ -1288,7 +1288,7 @@ async function pollStatus() {{
     const tsSubtitle = document.getElementById('tsSubtitle');
     if (tsSubtitle) {{
       if (tsOnline) {{
-        tsSubtitle.innerHTML = `IP: <code>${tsIp}</code> &middot; Subnet: <code>${localNetwork}</code>`;
+        tsSubtitle.innerHTML = `IP: <code>${{tsIp}}</code> &middot; Subnet: <code>${{localNetwork}}</code>`;
       }} else {{
         tsSubtitle.textContent = 'Remote access is off.';
       }}
