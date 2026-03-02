@@ -923,7 +923,7 @@ class HubAgent:
   </div>
 
   <!-- Tailscale Controls -->
-  <div class="card" id="tsControlCard" style="{'border:1px solid rgba(245,158,11,0.4);' if ts_online and routes_pending else ''}">
+  <div class="card" id="tsControlCard" style="{'border:1px solid rgba(245,158,11,0.4);' if ts_online and not routes_approved else ''}">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
       <div>
         <h2 style="margin:0;">Tailscale <span class="badge {'badge-yellow' if ts_online and routes_pending else ts_status_class}">{'Routes Pending' if ts_online and routes_pending else ts_status_label}</span></h2>
@@ -933,7 +933,7 @@ class HubAgent:
         {'<button onclick="turnOffTailscale()" class="btn" style="background:#2c2c2e;color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.15);">Turn Off</button><a href="#" onclick="disconnectTailscale(); return false;" style="color:rgba(255,255,255,0.35);font-size:0.8em;margin-left:4px;">Disconnect</a>' if ts_online else '<button onclick="turnOnTailscale()" class="btn">Turn On</button>' if can_turn_on else ''}
       </div>
     </div>
-    {'<div class="alert alert-yellow" style="margin:10px 0 0;">&#9888; <strong>Step 4 not complete yet.</strong> Waiting for API confirmation that subnet routes are approved. Go to the <a href="https://login.tailscale.com/admin/machines" target="_blank">Tailscale Machines page</a>, find <code>' + str(ts_hostname) + '</code>, click <strong>&hellip;</strong> &rarr; <strong>Edit route settings</strong>, and approve <code>' + str(detected_subnet) + '</code>. This warning clears only when the API reports routes approved.</div>' if ts_online and not routes_approved else ''}
+    <div id="tsStep4Warning" class="alert alert-yellow" style="margin:10px 0 0; {'display:block;' if ts_online and not routes_approved else 'display:none;'}">&#9888; <strong>Step 4 not complete yet.</strong> Waiting for API confirmation that subnet routes are approved. Go to the <a href="https://login.tailscale.com/admin/machines" target="_blank">Tailscale Machines page</a>, find <code>{ts_hostname}</code>, click <strong>&hellip;</strong> &rarr; <strong>Edit route settings</strong>, and approve <code>{detected_subnet}</code>. This warning clears only when the API reports routes approved.</div>
     {expiry_banner}
     <span id="tsControlResult" style="font-size:0.85em;display:block;margin-top:6px;"></span>
   </div>
@@ -987,10 +987,10 @@ class HubAgent:
       <span id="tsResult" style="margin-left:10px;font-size:0.9em;"></span>
     </div>
 
-    <div class="step {'step-highlight' if ts_online and not routes_approved else 'step-completed' if routes_approved else ''}">
+    <div id="step4Row" class="step {'step-highlight' if ts_online and not routes_approved else 'step-completed' if routes_approved else ''}">
       <span class="step-num {'step-action' if ts_online and not routes_approved else 'step-done' if routes_approved else ''}" id="step4badge">{'&#10003;' if routes_approved else '4'}</span>
       <strong>Approve Subnet Routes</strong>
-      {'<div class="alert alert-yellow" style="margin:8px 0;">&#9888; <strong>Step 4 not complete yet:</strong> routes are not approved in API status. Approve subnet routes in the Tailscale admin console and wait for API confirmation.</div>' if ts_online and not routes_approved else ''}
+      <div id="step4InlineWarning" class="alert alert-yellow" style="margin:8px 0; {'display:block;' if ts_online and not routes_approved else 'display:none;'}">&#9888; <strong>Step 4 not complete yet:</strong> routes are not approved in API status. Approve subnet routes in the Tailscale admin console and wait for API confirmation.</div>
       <p class="muted" style="margin:6px 0 0;">Go to the <a href="https://login.tailscale.com/admin/machines" target="_blank">Tailscale Machines page</a>. Find <code>{ts_hostname}</code>, click the <strong>&hellip;</strong> menu, then <strong>Edit route settings</strong>. Approve the route for your local network <code>{detected_subnet}</code>.</p>
       <details style="margin-top:10px;">
         <summary style="cursor:pointer;color:#33e680;font-size:0.9em;">Show me how</summary>
@@ -1213,6 +1213,39 @@ async function pollStatus() {{
     const ts = data.tailscale || {{}};
     const key = [ts.online, ts.routesPending, ts.routesApproved, ts.keyExpired, ts.keyExpiringSoon].join(',');
     _lastState = key;
+
+    const routesApproved = !!ts.routesApproved;
+    const tsOnline = !!ts.online;
+
+    const topWarn = document.getElementById('tsStep4Warning');
+    if (topWarn) topWarn.style.display = (tsOnline && !routesApproved) ? 'block' : 'none';
+
+    const inlineWarn = document.getElementById('step4InlineWarning');
+    if (inlineWarn) inlineWarn.style.display = (tsOnline && !routesApproved) ? 'block' : 'none';
+
+    const step4Row = document.getElementById('step4Row');
+    if (step4Row) {{
+      step4Row.classList.remove('step-highlight', 'step-completed');
+      if (routesApproved) step4Row.classList.add('step-completed');
+      else if (tsOnline) step4Row.classList.add('step-highlight');
+    }}
+
+    const step4Badge = document.getElementById('step4badge');
+    if (step4Badge) {{
+      step4Badge.classList.remove('step-action', 'step-done');
+      if (routesApproved) {{
+        step4Badge.classList.add('step-done');
+        step4Badge.innerHTML = '&#10003;';
+      }} else {{
+        if (tsOnline) step4Badge.classList.add('step-action');
+        step4Badge.textContent = '4';
+      }}
+    }}
+
+    const tsCard = document.getElementById('tsControlCard');
+    if (tsCard) {{
+      tsCard.style.border = (tsOnline && !routesApproved) ? '1px solid rgba(245,158,11,0.4)' : '';
+    }}
   }} catch (e) {{}}
 }}
 setInterval(pollStatus, 3000);
