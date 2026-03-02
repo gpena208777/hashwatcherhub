@@ -1080,7 +1080,7 @@ function markStep1Done() {{
 function markStep2Done() {{
   markStepDone('step2', 'step2badge', 'step2DoneBtn', null);
   const input = document.getElementById('tsAuthKey');
-  if (input) {{ input.focus(); input.scrollIntoView({{ behavior: 'smooth', block: 'center' }}); }}
+  if (input) {{ input.focus(); }}
 }}
 function markStep5Done() {{
   markStepDone('step5', 'step5badge', 'step5DoneBtn', 'hw_step5_done');
