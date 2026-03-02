@@ -1116,13 +1116,13 @@ async function connectTailscale() {{
           if (sd.online && sd.ip) {{
             result.textContent = 'Connected! IP: ' + sd.ip;
             clearInterval(pollReload);
-            setTimeout(() => location.reload(), 500);
+            result.textContent += ' (connected)';
           }} else if (polls >= 15) {{
             clearInterval(pollReload);
-            location.reload();
+            result.textContent = 'Connected. IP may still be resolving.';
           }}
         }} catch (_) {{
-          if (polls >= 15) {{ clearInterval(pollReload); location.reload(); }}
+          if (polls >= 15) {{ clearInterval(pollReload); result.textContent = 'Connected. Refresh later to verify status.'; }}
         }}
       }}, 2000);
     }} else {{
@@ -1147,7 +1147,6 @@ async function turnOffTailscale() {{
     const data = await resp.json();
     if (data.ok) {{
       result.textContent = 'Turned off.'; result.style.color = '#33e680';
-      setTimeout(() => location.reload(), 1000);
     }} else {{
       result.textContent = data.error || 'Failed'; result.style.color = '#fca5a5';
     }}
@@ -1163,7 +1162,6 @@ async function turnOnTailscale() {{
     const data = await resp.json();
     if (data.ok) {{
       result.textContent = 'Connected!'; result.style.color = '#33e680';
-      setTimeout(() => location.reload(), 1500);
     }} else {{
       result.textContent = data.error || 'Failed'; result.style.color = '#fca5a5';
     }}
@@ -1180,7 +1178,6 @@ async function disconnectTailscale() {{
     const data = await resp.json();
     if (data.ok) {{
       result.textContent = 'Disconnected.'; result.style.color = '#33e680';
-      setTimeout(() => location.reload(), 1000);
     }} else {{
       result.textContent = data.error || 'Failed'; result.style.color = '#fca5a5';
     }}
@@ -1191,19 +1188,15 @@ async function disconnectTailscale() {{
 
 function markSetupComplete() {{
   localStorage.setItem('hw_setup_complete', '1');
-  const guide = document.getElementById('setupGuide');
-  if (guide) guide.removeAttribute('open');
   document.getElementById('setupGuideTitle').textContent = 'Setup Complete';
-  document.getElementById('setupGuideTap').textContent = 'tap to expand';
+  document.getElementById('setupGuideTap').textContent = '';
   const btn = document.getElementById('setupCompleteBtn');
   if (btn) btn.style.display = 'none';
 }}
 function restoreSetupComplete() {{
   if (localStorage.getItem('hw_setup_complete') === '1') {{
-    const guide = document.getElementById('setupGuide');
-    if (guide) guide.removeAttribute('open');
     document.getElementById('setupGuideTitle').textContent = 'Setup Complete';
-    document.getElementById('setupGuideTap').textContent = 'tap to expand';
+    document.getElementById('setupGuideTap').textContent = '';
     const btn = document.getElementById('setupCompleteBtn');
     if (btn) btn.style.display = 'none';
   }}
@@ -1219,10 +1212,6 @@ async function pollStatus() {{
     const data = await resp.json();
     const ts = data.tailscale || {{}};
     const key = [ts.online, ts.routesPending, ts.routesApproved, ts.keyExpired, ts.keyExpiringSoon].join(',');
-    if (_lastState !== null && key !== _lastState) {{
-      location.reload();
-      return;
-    }}
     _lastState = key;
   }} catch (e) {{}}
 }}
