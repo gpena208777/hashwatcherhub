@@ -55,7 +55,26 @@ description: >-
   remote access to all your other Umbrel apps — Home Assistant, Immich,
   Bitcoin Node, and everything else on your dashboard
 icon: https://raw.githubusercontent.com/gpena208777/hashwatcherhub/main/hashwatcher-gateway/icon.png
-releaseNotes: "Bug fixes."
+releaseNotes: >-
+  🚀 The HashWatcher Umbrel app is here — monitor your miners from anywhere in the world.
+
+
+  Connect your Umbrel to the HashWatcher iOS app and get fully remote access to your entire
+  mining fleet, secured by Tailscale. No port forwarding, no VPN setup headaches.
+
+
+  Getting started is easy:
+
+  1. Install this app on Umbrel
+
+  2. Download Tailscale on your phone
+
+  3. Add the Umbrel Community App Store URL (found in HashWatcher Settings)
+
+  4. Follow the on-screen setup guide
+
+
+  Need help? Email us directly from within the app.
 developer: Engineered Essentials
 website: https://hashwatcher.app
 dependencies: []
