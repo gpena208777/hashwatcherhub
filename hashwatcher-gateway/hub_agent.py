@@ -933,7 +933,7 @@ class HubAgent:
         {'<button onclick="turnOffTailscale()" class="btn" style="background:#2c2c2e;color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.15);">Turn Off</button><a href="#" onclick="disconnectTailscale(); return false;" style="color:rgba(255,255,255,0.35);font-size:0.8em;margin-left:4px;">Disconnect</a>' if ts_online else '<button onclick="turnOnTailscale()" class="btn">Turn On</button>' if can_turn_on else ''}
       </div>
     </div>
-    {'<div class="alert alert-yellow" style="margin:10px 0 0;">&#9888; <strong>Subnet routes need approval.</strong> Go to the <a href="https://login.tailscale.com/admin/machines" target="_blank">Tailscale Machines page</a>, find <code>' + str(ts_hostname) + '</code>, click <strong>&hellip;</strong> &rarr; <strong>Edit route settings</strong>, and approve <code>' + str(detected_subnet) + '</code>.</div>' if ts_online and routes_pending else ''}
+    {'<div class="alert alert-yellow" style="margin:10px 0 0;">&#9888; <strong>Step 4 not complete yet.</strong> Waiting for API confirmation that subnet routes are approved. Go to the <a href="https://login.tailscale.com/admin/machines" target="_blank">Tailscale Machines page</a>, find <code>' + str(ts_hostname) + '</code>, click <strong>&hellip;</strong> &rarr; <strong>Edit route settings</strong>, and approve <code>' + str(detected_subnet) + '</code>. This warning clears only when the API reports routes approved.</div>' if ts_online and not routes_approved else ''}
     {expiry_banner}
     <span id="tsControlResult" style="font-size:0.85em;display:block;margin-top:6px;"></span>
   </div>
@@ -987,10 +987,10 @@ class HubAgent:
       <span id="tsResult" style="margin-left:10px;font-size:0.9em;"></span>
     </div>
 
-    <div class="step {'step-highlight' if routes_pending else 'step-completed' if ts_online and not routes_pending else ''}">
-      <span class="step-num {'step-action' if routes_pending else 'step-done' if ts_online and not routes_pending else ''}" id="step4badge">{'&#10003;' if ts_online and not routes_pending else '4'}</span>
+    <div class="step {'step-highlight' if ts_online and not routes_approved else 'step-completed' if routes_approved else ''}">
+      <span class="step-num {'step-action' if ts_online and not routes_approved else 'step-done' if routes_approved else ''}" id="step4badge">{'&#10003;' if routes_approved else '4'}</span>
       <strong>Approve Subnet Routes</strong>
-      {'<div class="alert alert-yellow" style="margin:8px 0;">&#9888; <strong>Action needed:</strong> Your routes are advertised but not yet approved. Approve them in the Tailscale admin console so your miners are reachable remotely.</div>' if routes_pending else ''}
+      {'<div class="alert alert-yellow" style="margin:8px 0;">&#9888; <strong>Step 4 not complete yet:</strong> routes are not approved in API status. Approve subnet routes in the Tailscale admin console and wait for API confirmation.</div>' if ts_online and not routes_approved else ''}
       <p class="muted" style="margin:6px 0 0;">Go to the <a href="https://login.tailscale.com/admin/machines" target="_blank">Tailscale Machines page</a>. Find <code>{ts_hostname}</code>, click the <strong>&hellip;</strong> menu, then <strong>Edit route settings</strong>. Approve the route for your local network <code>{detected_subnet}</code>.</p>
       <details style="margin-top:10px;">
         <summary style="cursor:pointer;color:#33e680;font-size:0.9em;">Show me how</summary>
