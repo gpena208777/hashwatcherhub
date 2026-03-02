@@ -911,11 +911,11 @@ class HubAgent:
 
   <!-- Status Card -->
   <div class="card">
-    <h2>Status <span class="badge {ts_status_class}">{ts_status_label}</span></h2>
-    <div class="info-row"><span class="info-label">Local IP</span><code>{local_ip}</code></div>
-    <div class="info-row"><span class="info-label">Local Network</span><code>{detected_subnet}</code></div>
-    <div class="info-row"><span class="info-label">Tailscale IP</span><code>{ts_ip}</code></div>
-    <div class="info-row"><span class="info-label">Tailscale Hostname</span><code>{ts_hostname_actual}</code></div>
+    <h2>Status <span id="statusBadge" class="badge {ts_status_class}">{ts_status_label}</span></h2>
+    <div class="info-row"><span class="info-label">Local IP</span><code id="statusLocalIp">{local_ip}</code></div>
+    <div class="info-row"><span class="info-label">Local Network</span><code id="statusLocalNetwork">{detected_subnet}</code></div>
+    <div class="info-row"><span class="info-label">Tailscale IP</span><code id="statusTailscaleIp">{ts_ip}</code></div>
+    <div class="info-row"><span class="info-label">Tailscale Hostname</span><code id="statusTailscaleHostname">{ts_hostname_actual}</code></div>
     {expiry_banner}
     <hr class="divider">
     <h3 style="margin:8px 0 10px;">System</h3>
@@ -933,8 +933,8 @@ class HubAgent:
   <div class="card" id="tsControlCard" style="{'border:1px solid rgba(245,158,11,0.4);' if ts_online and not routes_approved else ''}">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
       <div>
-        <h2 style="margin:0;">Tailscale <span class="badge {'badge-yellow' if ts_online and routes_pending else ts_status_class}">{'Routes Pending' if ts_online and routes_pending else ts_status_label}</span></h2>
-        {'<p class="muted" style="margin:4px 0 0;font-size:0.85em;">IP: <code>' + str(ts_ip) + '</code> &middot; Subnet: <code>' + str(detected_subnet) + '</code></p>' if ts_online else '<p class="muted" style="margin:4px 0 0;font-size:0.85em;">Remote access is off. ' + ('Use the button to reconnect.' if can_turn_on else 'Complete the setup below to connect.') + '</p>'}
+        <h2 style="margin:0;">Tailscale <span id="tsBadge" class="badge {'badge-yellow' if ts_online and routes_pending else ts_status_class}">{'Routes Pending' if ts_online and routes_pending else ts_status_label}</span></h2>
+        <p id="tsSubtitle" class="muted" style="margin:4px 0 0;font-size:0.85em;">{'IP: <code>' + str(ts_ip) + '</code> &middot; Subnet: <code>' + str(detected_subnet) + '</code>' if ts_online else 'Remote access is off. ' + ('Use the button to reconnect.' if can_turn_on else 'Complete the setup below to connect.')}</p>
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
         {'<button onclick="turnOffTailscale()" class="btn" style="background:#2c2c2e;color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.15);">Turn Off</button><a href="#" onclick="disconnectTailscale(); return false;" style="color:rgba(255,255,255,0.35);font-size:0.8em;margin-left:4px;">Disconnect</a>' if ts_online else '<button onclick="turnOnTailscale()" class="btn">Turn On</button>' if can_turn_on else ''}
@@ -1231,14 +1231,68 @@ restoreStepDone('step5', 'step5badge', 'step5DoneBtn', 'hw_step5_done');
 let _lastState = null;
 async function pollStatus() {{
   try {{
-    const resp = await fetch('/api/status');
-    const data = await resp.json();
+    const [statusResp, networkResp] = await Promise.all([
+      fetch('/api/status'),
+      fetch('/api/network')
+    ]);
+    const data = await statusResp.json();
+    const net = await networkResp.json();
     const ts = data.tailscale || {{}};
     const key = [ts.online, ts.routesPending, ts.routesApproved, ts.keyExpired, ts.keyExpiringSoon].join(',');
     _lastState = key;
 
     const routesApproved = !!ts.routesApproved;
     const tsOnline = !!ts.online;
+    const routesPending = !!ts.routesPending;
+    const tsIp = ts.ip || '-';
+    const tsHostname = ts.hostname || '-';
+    const localIp = net.localIp || '-';
+    const localNetwork = net.detectedSubnet || '-';
+
+    const statusBadge = document.getElementById('statusBadge');
+    if (statusBadge) {{
+      statusBadge.classList.remove('badge-green', 'badge-red');
+      if (tsOnline) {{
+        statusBadge.classList.add('badge-green');
+        statusBadge.textContent = 'Connected';
+      }} else {{
+        statusBadge.classList.add('badge-red');
+        statusBadge.textContent = ts.installed ? 'Offline' : 'Not Installed';
+      }}
+    }}
+
+    const localIpEl = document.getElementById('statusLocalIp');
+    if (localIpEl) localIpEl.textContent = localIp;
+    const localNetEl = document.getElementById('statusLocalNetwork');
+    if (localNetEl) localNetEl.textContent = localNetwork;
+    const tsIpEl = document.getElementById('statusTailscaleIp');
+    if (tsIpEl) tsIpEl.textContent = tsIp;
+    const tsHostEl = document.getElementById('statusTailscaleHostname');
+    if (tsHostEl) tsHostEl.textContent = tsHostname;
+
+    const tsBadge = document.getElementById('tsBadge');
+    if (tsBadge) {{
+      tsBadge.classList.remove('badge-green', 'badge-red', 'badge-yellow');
+      if (tsOnline && routesPending) {{
+        tsBadge.classList.add('badge-yellow');
+        tsBadge.textContent = 'Routes Pending';
+      }} else if (tsOnline) {{
+        tsBadge.classList.add('badge-green');
+        tsBadge.textContent = 'Connected';
+      }} else {{
+        tsBadge.classList.add('badge-red');
+        tsBadge.textContent = ts.installed ? 'Offline' : 'Not Installed';
+      }}
+    }}
+
+    const tsSubtitle = document.getElementById('tsSubtitle');
+    if (tsSubtitle) {{
+      if (tsOnline) {{
+        tsSubtitle.innerHTML = `IP: <code>${tsIp}</code> &middot; Subnet: <code>${localNetwork}</code>`;
+      }} else {{
+        tsSubtitle.textContent = 'Remote access is off.';
+      }}
+    }}
 
     const topWarn = document.getElementById('tsStep4Warning');
     if (topWarn) topWarn.style.display = (tsOnline && !routesApproved) ? 'block' : 'none';
