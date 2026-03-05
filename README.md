@@ -66,6 +66,9 @@ Download [Tailscale](https://tailscale.com/download) on your phone and sign in w
 
 On the [Tailscale Machines page](https://login.tailscale.com/admin/machines), find **HashWatcherGateway**, click **…**, and toggle **Disable key expiry**. This keeps the gateway connected permanently with no maintenance.
 
+### Step 7 — Open HashWatcher 
+That's all. There is no need to change or edit any of the devices IP address in your inventory. 
+
 **Done.** Open the HashWatcher app and your miners are accessible from anywhere.
 
 ---
