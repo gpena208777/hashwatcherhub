@@ -57,6 +57,7 @@ Paste the auth key into the gateway's setup page. The gateway connects to your T
 ### Step 4 — Approve Subnet Routes
 
 Go to the [Tailscale Machines page](https://login.tailscale.com/admin/machines), find **HashWatcherGateway**, click **…** → **Edit route settings**, and approve your local subnet (e.g. `192.168.1.0/24`).
+  Troubleshooting: If Tailscale shows as connected but your miners or local devices are not reachable remotely, confirm that the subnet listed in the Umbrel app matches your router’s local gateway network. For example, if your router is 170.100.1.1, the subnet should typically be 170.100.1.0/24. If the subnet in the gateway configuration does not match your actual LAN range, remote access will not work even though Tailscale appears connected.
 
 ### Step 5 — Install Tailscale on Your Phone
 
