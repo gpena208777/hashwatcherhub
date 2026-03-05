@@ -1,6 +1,6 @@
 manifestVersion: 1
 id: hashwatcher-gateway
-category: finance
+category: utilities
 name: HashWatcher Gateway
 version: "1.2.9"
 tagline: Monitor your ASIC miners from anywhere
