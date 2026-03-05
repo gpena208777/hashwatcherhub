@@ -42,6 +42,14 @@ Pair it with the free **HashWatcher app** for iOS, macOS, and Android to get rea
 
 After installing, the gateway dashboard walks you through everything:
 
+Prefer a video how-to? Watch this 
+
+ ```
+https://www.twitch.tv/videos/2714786107?t=0h0m33s
+
+   ```
+
+
 ### Step 1 — Download the HashWatcher App
 
 Get the free companion app at [HashWatcher.app](https://www.HashWatcher.app). Available for iOS, macOS, and Android.
