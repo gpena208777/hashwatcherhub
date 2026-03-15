@@ -28,6 +28,8 @@ Pair it with the free **HashWatcher app** for iOS, macOS, and Android to get rea
 ## Install
 Watch this video first: https://www.twitch.tv/videos/2714786107?t=0h0m34s
 
+Join our Discord https://discord.gg/Xu66PvpAm
+
 1. Open your Umbrel dashboard
 2. Go to **App Store** → **Community App Stores**
 3. Add this repository:
