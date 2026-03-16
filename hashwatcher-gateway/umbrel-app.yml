@@ -1,8 +1,8 @@
 manifestVersion: 1
 id: hashwatcher-gateway
-category: utilities
+category: finance
 name: HashWatcher Gateway
-version: "1.2.9"
+version: "1.3.0"
 tagline: Monitor your ASIC miners from anywhere
 description: >-
   HashWatcher Gateway turns your Umbrel into a remote bridge for monitoring
@@ -36,6 +36,10 @@ description: >-
   • No port forwarding or dynamic DNS required
 
   • Tailscale key expiry monitoring with proactive alerts in the HashWatcher app
+
+  • If you're using StratumOS, enter the correct LAN subnet in the optional
+  Subnet field so it matches your network range (for example,
+  192.168.1.0/24)
 
 
   📱 HashWatcher App Integration
@@ -72,6 +76,10 @@ releaseNotes: >-
   3. Add the Umbrel Community App Store URL (found in HashWatcher Settings)
 
   4. Follow the on-screen setup guide
+
+  If you're using StratumOS, make sure you enter the optional Subnet field
+  with the correct subnet range for your network (for example,
+  192.168.1.0/24).
 
 
   Need help? Email us directly from within the app.

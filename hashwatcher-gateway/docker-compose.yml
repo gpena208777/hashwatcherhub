@@ -10,7 +10,7 @@ services:
       PROXY_AUTH_ADD: "false"
 
   web:
-    image: hashwatcher/hashwatcher-gateway:latest
+    image: hashwatcher/hashwatcher-gateway:1.3.0
     restart: on-failure
     stop_grace_period: 30s
     privileged: true
