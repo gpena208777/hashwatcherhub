@@ -87,12 +87,6 @@ That's all. There is no need to change or edit any of the devices IP address in 
 
 ## Features
 
-**Mining Monitoring**
-- Automatic discovery of miners on your local network
-- Real-time polling of hashrate, temperature, power, and efficiency
-- Proxy requests to individual miners through the gateway
-- Web dashboard with system stats (CPU, memory, disk, temperature)
-
 **Built-in Tailscale**
 - Tailscale runs inside the app — no separate Tailscale installation needed
 - Completely isolated from any Tailscale you already have on your Umbrel
@@ -102,14 +96,6 @@ That's all. There is no need to change or edit any of the devices IP address in 
 **Full Umbrel Remote Access**
 - Since the gateway advertises your local subnet, you also get remote access to all your other Umbrel apps — Home Assistant, Immich, Bitcoin Node, and everything else on your dashboard
 
----
-
-## Supported Miners
-
-- **BitAxe** — all variants (Supra, Ultra, Gamma, Hex, etc.)
-- **NerdQAxe / NerdAxe**
-- **Canaan Avalon**
-- Any miner with an HTTP API on your local network
 
 ---
 
