@@ -2,7 +2,7 @@ manifestVersion: 1
 id: hashwatcher-gateway
 category: finance
 name: HashWatcher Gateway
-version: "1.2.10"
+version: "1.2.11"
 tagline: Monitor your ASIC miners from anywhere
 description: >-
   HashWatcher Gateway turns your Umbrel into a remote bridge for monitoring
@@ -59,10 +59,9 @@ description: >-
   Bitcoin Node, and everything else on your dashboard
 icon: https://raw.githubusercontent.com/gpena208777/hashwatcherhub/main/hashwatcher-gateway/icon.png
 releaseNotes: >-
-  Tailscale setup is now simpler and safer. Your Umbrel's local network is
-  detected automatically and Tailscale-only (100.x) addresses are never shared
-  as a subnet route. If miners live on another VLAN or LAN, add one or more
-  private network CIDRs in the optional field, separated by commas.
+  Tailscale now shares your real home network. Umbrel's internal app network
+  is no longer advertised as the subnet route, and the saved subnet includes
+  the detected LAN. Extra VLAN routes can still be added in the optional field.
 developer: Engineered Essentials
 website: https://hashwatcher.app
 dependencies: []
