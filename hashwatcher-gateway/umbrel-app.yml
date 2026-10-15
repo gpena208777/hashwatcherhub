@@ -2,7 +2,7 @@ manifestVersion: 1
 id: hashwatcher-gateway
 category: finance
 name: HashWatcher Gateway
-version: "1.2.12"
+version: "1.3.1"
 tagline: Monitor your ASIC miners from anywhere
 description: >-
   HashWatcher Gateway turns your Umbrel into a remote bridge for monitoring
@@ -59,10 +59,10 @@ description: >-
   Bitcoin Node, and everything else on your dashboard
 icon: https://raw.githubusercontent.com/gpena208777/hashwatcherhub/main/hashwatcher-gateway/icon.png
 releaseNotes: >-
-  Updates the built-in Tailscale client to 1.104.1. This clears the Tailscale
-  admin warning about a known security vulnerability. Your existing Tailscale
-  login and approved subnet routes stay in place. Update from the Umbrel app
-  store, then refresh the Tailscale Machines page.
+  Gateway package 1.3.1. The built-in Tailscale client is 1.104.1, which clears
+  the Tailscale admin warning about a known security vulnerability. Existing
+  Tailscale login and approved subnet routes stay in place. Refresh the
+  Tailscale Machines page after the package updates.
 developer: Engineered Essentials
 website: https://hashwatcher.app
 dependencies: []
